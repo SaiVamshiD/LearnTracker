@@ -1,0 +1,103 @@
+
+<body>
+  <div class="main-container">
+  <div class="row mt-3">
+    <div class="col-md-4">
+      <button class="btn btn-primary" (click)="changeBoard(true)">LeaderBoard</button>
+    </div>
+    <div class="col-md-8 text-right">
+      <button class="btn checkprogressbtn" (click)="changeBoard(false)">Check Progress</button>
+    </div>
+  </div>
+</div>
+
+<div class="leaderboard" *ngIf="isLeaderBoard">
+
+  
+    <h1>Leaderboard</h1>
+
+    <div>
+      <label>Filter:</label>
+      <select [(ngModel)]="selectedFilter" (change)="filterData()">
+        <option value="allStudents">All Students</option>
+        <option value="studentsWithCourses">Students with Your Courses</option>
+        <option value="yourFriends">My Friends</option>
+        <option value="friendsWithCourses">Friends in Your Courses Only</option>
+      </select>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th (click)="sortData('rank')">Rank</th>
+          <th (click)="sortData('userName')">Username</th>
+          <th (click)="sortData('badge')">Badge</th>
+          <th (click)="sortData('milestonesCompleted')">Milestones Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of leaderboardData">
+          <td>{{ user.rank }}</td>
+          <td>{{ user.userName }}</td>
+          <td>
+            <ng-container *ngIf="getBadgeImagePath(user.badge); else noBadge">
+              <img [src]="getBadgeImagePath(user.badge)" [alt]="user.badge" style="height: 24px; width: 24px;">
+              {{ user.badge }}
+            </ng-container>
+            <ng-template #noBadge>No Badge</ng-template>
+          </td>
+          <td>{{ user.milestonesCompleted }}</td>
+        </tr>
+      </tbody>
+      
+      
+    </table>
+  </div>
+  <div class="checkprogress" *ngIf="!isLeaderBoard">
+    <h1>Student Progress</h1>
+    <div>
+
+      <label for="filterCourse">Course:</label>
+      <select id="filterCourse" class="form-control" [(ngModel)]="selectedCourseId">
+        <option value="" disabled selected>Select Course</option>
+        <option *ngFor="let course of myCourses" [value]="course.courseId">{{ course.courseName }}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" (click)="checkProgress()">Check Progress</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th *ngFor="let _ of [].constructor(maxTasks); let i = index">
+            <div class="taskheading">Task {{ i + 1 }}</div>
+            <hr/>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Notes</span>
+              <span>Difficulty</span>
+              <span>Milestones</span>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of studentTasks">
+          <td>{{ student.studentfirstName }} {{ student.studentlastName }}</td>
+          <td *ngFor="let task of student.tasks; let i = index">
+            <div *ngIf="student.tasks[i]; else naTemplate">
+              <div style="display: flex; justify-content: space-between;">
+                <span>{{ student.tasks[i].notes || 'N/A' }}</span>
+                <span>{{ student.tasks[i].difficultyLevel || 'N/A' }}</span>
+                <span>{{ student.tasks[i].milestonesCompletedOutOfTotal }}</span>
+              </div>
+            </div>
+            <ng-template #naTemplate>N/A</ng-template>
+          </td>
+        </tr>
+      </tbody>
+      
+    </table>
+    
+    
+    
+  </div>
+</body>
+  
